@@ -1,6 +1,5 @@
 import turtle
 import time
-import random
 
 delay = 0.01
 
@@ -11,65 +10,92 @@ high_score = 0
 # Set up the screen
 wn = turtle.Screen()
 wn.title("Move Game by @Garrocho")
-wn.bgcolor("green")
-wn.setup(width=1.0, height=1.0, startx=None, starty=None)
-wn.tracer(0) # Turns off the screen updates
+wn.bgcolor("black")
+wn.setup(width=800, height=600)  # Define a largura e altura da tela
+wn.tracer(0)  # Desliga a atualização da tela
 
-# gamer 1
-head = turtle.Turtle()
-head.speed(0)
-head.shape("circle")
-head.color("red")
-head.penup()
-head.goto(0,0)
-head.direction = "stop"
+# Lista para os jogadores
+players = []
 
-# Functions
-def go_up():
-    head.direction = "up"
+# Criando jogadores
+colors = ["red", "blue", "green"]  # Cores distintas para os jogadores
+start_positions = [(0, 0), (100, 0), (-100, 0)]  # Posições iniciais dos jogadores
 
-def go_down():
-    head.direction = "down"
+for i in range(3):
+    player = turtle.Turtle()
+    player.speed(0)
+    player.shape("circle")
+    player.color(colors[i])
+    player.penup()
+    player.goto(start_positions[i])
+    player.direction = "stop"
+    players.append(player)
 
-def go_left():
-    head.direction = "left"
+# Funções para movimentar os jogadores
+def go_up(player):
+    player.direction = "up"
 
-def go_right():
-    head.direction = "right"
+def go_down(player):
+    player.direction = "down"
+
+def go_left(player):
+    player.direction = "left"
+
+def go_right(player):
+    player.direction = "right"
 
 def close():
     wn.bye()
 
-def move():
-    if head.direction == "up":
-        y = head.ycor()
-        head.sety(y + 2)
+def move(player):
+    if player.direction == "up":
+        y = player.ycor()
+        if y < 290:  # Limite superior
+            player.sety(y + 20)
 
-    if head.direction == "down":
-        y = head.ycor()
-        head.sety(y - 2)
+    if player.direction == "down":
+        y = player.ycor()
+        if y > -290:  # Limite inferior
+            player.sety(y - 20)
 
-    if head.direction == "left":
-        x = head.xcor()
-        head.setx(x - 2)
+    if player.direction == "left":
+        x = player.xcor()
+        if x > -390:  # Limite esquerdo
+            player.setx(x - 20)
 
-    if head.direction == "right":
-        x = head.xcor()
-        head.setx(x + 2)
+    if player.direction == "right":
+        x = player.xcor()
+        if x < 390:  # Limite direito
+            player.setx(x + 20)
 
-# Keyboard bindings
-wn.listen()
-wn.onkeypress(go_up, "w")
-wn.onkeypress(go_down, "s")
-wn.onkeypress(go_left, "a")
-wn.onkeypress(go_right, "d")
-wn.onkeypress(close, "Escape")
+# Bindings de teclado para cada jogador
+def setup_controls(player_index):
+    wn.listen()
+    if player_index == 0:
+        wn.onkeypress(lambda: go_up(players[player_index]), "w")
+        wn.onkeypress(lambda: go_down(players[player_index]), "s")
+        wn.onkeypress(lambda: go_left(players[player_index]), "a")
+        wn.onkeypress(lambda: go_right(players[player_index]), "d")
+    elif player_index == 1:
+        wn.onkeypress(lambda: go_up(players[player_index]), "i")
+        wn.onkeypress(lambda: go_down(players[player_index]), "k")
+        wn.onkeypress(lambda: go_left(players[player_index]), "j")
+        wn.onkeypress(lambda: go_right(players[player_index]), "l")
+    elif player_index == 2:
+        wn.onkeypress(lambda: go_up(players[player_index]), "Up")
+        wn.onkeypress(lambda: go_down(players[player_index]), "Down")
+        wn.onkeypress(lambda: go_left(players[player_index]), "Left")
+        wn.onkeypress(lambda: go_right(players[player_index]), "Right")
 
-# Main game loop
+# Configurar os controles para cada jogador
+for i in range(3):
+    setup_controls(i)
+
+# Loop principal do jogo
 while True:
     wn.update()
-    move()
+    for player in players:
+        move(player)
     time.sleep(delay)
-
 
 wn.mainloop()
