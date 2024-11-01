@@ -14,7 +14,7 @@ players = {}
 # Função chamada ao conectar ao broker
 def on_connect(client, userdata, flags, rc):
     print("Conectado com código de resultado " + str(rc))
-    client.subscribe("/data")
+    client.subscribe("/data")  # Assina o tópico /data
 
 # Função chamada ao receber uma mensagem
 def on_message(client, userdata, msg):
@@ -31,7 +31,7 @@ def mqtt_loop():
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(broker, port, timelive)
-    client.loop_forever()  # Mantém o loop rodando
+    client.loop_forever()  # Mantém o loop rodando para receber mensagens
 
 # Inicia a thread do loop MQTT
 threading.Thread(target=mqtt_loop, daemon=True).start()
@@ -42,7 +42,12 @@ def main():
         while True:
             # Imprime as posições dos jogadores a cada 5 segundos
             time.sleep(5)
-            print("Estado atual dos jogadores:", players)
+            if players:  # Verifica se há jogadores registrados
+                print("Estado atual dos jogadores:")
+                for name, position in players.items():
+                    print(f"  - {name}: posição {position}")
+            else:
+                print("Nenhum jogador conectado.")
     except KeyboardInterrupt:
         print("Encerrando o assinante...")
 

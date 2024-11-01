@@ -1,18 +1,17 @@
 import turtle
 import time
 
-delay = 0.01
+delay = 0.08
 
 # Score
 score = 0
 high_score = 0
 
-# Set up the screen
 wn = turtle.Screen()
 wn.title("Move Game by @Garrocho")
-wn.bgcolor("black")
-wn.setup(width=800, height=600)  # Define a largura e altura da tela
-wn.tracer(0)  # Desliga a atualização da tela
+wn.bgpic("jogo.gif") 
+wn.setup(width=900, height=900)  
+wn.tracer(0)  
 
 # Lista para os jogadores
 players = []
@@ -29,6 +28,7 @@ for i in range(3):
     player.penup()
     player.goto(start_positions[i])
     player.direction = "stop"
+    player.shapesize(stretch_wid=1.5, stretch_len=1.5)  # Tamanho das bolinhas
     players.append(player)
 
 # Funções para movimentar os jogadores
@@ -44,28 +44,31 @@ def go_left(player):
 def go_right(player):
     player.direction = "right"
 
+def stop(player):
+    player.direction = "stop"  
+
 def close():
     wn.bye()
 
 def move(player):
     if player.direction == "up":
         y = player.ycor()
-        if y < 290:  # Limite superior
+        if y < 420:  
             player.sety(y + 20)
 
     if player.direction == "down":
         y = player.ycor()
-        if y > -290:  # Limite inferior
+        if y > -420: 
             player.sety(y - 20)
 
     if player.direction == "left":
         x = player.xcor()
-        if x > -390:  # Limite esquerdo
+        if x > -420: 
             player.setx(x - 20)
 
     if player.direction == "right":
         x = player.xcor()
-        if x < 390:  # Limite direito
+        if x < 420: 
             player.setx(x + 20)
 
 # Bindings de teclado para cada jogador
@@ -76,26 +79,30 @@ def setup_controls(player_index):
         wn.onkeypress(lambda: go_down(players[player_index]), "s")
         wn.onkeypress(lambda: go_left(players[player_index]), "a")
         wn.onkeypress(lambda: go_right(players[player_index]), "d")
+        wn.onkeypress(lambda: stop(players[player_index]), "x")  # Parar com a tecla "x"
     elif player_index == 1:
         wn.onkeypress(lambda: go_up(players[player_index]), "i")
         wn.onkeypress(lambda: go_down(players[player_index]), "k")
         wn.onkeypress(lambda: go_left(players[player_index]), "j")
         wn.onkeypress(lambda: go_right(players[player_index]), "l")
+        wn.onkeypress(lambda: stop(players[player_index]), "m")  # Parar com a tecla "m"
     elif player_index == 2:
         wn.onkeypress(lambda: go_up(players[player_index]), "Up")
         wn.onkeypress(lambda: go_down(players[player_index]), "Down")
         wn.onkeypress(lambda: go_left(players[player_index]), "Left")
         wn.onkeypress(lambda: go_right(players[player_index]), "Right")
+        wn.onkeypress(lambda: stop(players[player_index]), "p")  # Parar com a tecla "p"
 
 # Configurar os controles para cada jogador
 for i in range(3):
     setup_controls(i)
 
 # Loop principal do jogo
-while True:
-    wn.update()
-    for player in players:
-        move(player)
-    time.sleep(delay)
-
-wn.mainloop()
+try:
+    while True:
+        wn.update()
+        for player in players:
+            move(player)
+        time.sleep(delay)
+except turtle.Terminator:
+    print("A janela foi fechada." +"\n "+" ______O jogo terminou._______")
